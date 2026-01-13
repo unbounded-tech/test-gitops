@@ -1,0 +1,35 @@
+---
+# Source: argo-application/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-project-workflows-gitops-feat-promotion-config-refactor
+  namespace: argocd
+  labels:
+    preview: "true"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: test-project
+  source:
+    repoURL: https://github.com/unbounded-tech/workflows-gitops.git
+    targetRevision: feat/promotion-config-refactor
+    path: .
+    helm:
+      values: |
+        env:
+          test: true
+          type: preview
+          method: promotion
+          event: push
+        image:
+          tag: feat-promotion-config-refactor-cb1f97f91daaf07bad4cde476674e169a88c4109
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: workflows-gitops-feat-promotion-config-refactor
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
