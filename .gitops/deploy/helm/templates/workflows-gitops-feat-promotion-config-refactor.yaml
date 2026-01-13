@@ -23,7 +23,7 @@ spec:
           method: promotion
           event: push
         image:
-          tag: feat-promotion-config-refactor-cb1f97f91daaf07bad4cde476674e169a88c4109
+          tag: feat-promotion-config-refactor-54992791139d5df73d49326ce37b118771b58cc1
   destination:
     server: https://kubernetes.default.svc
     namespace: workflows-gitops-feat-promotion-config-refactor
