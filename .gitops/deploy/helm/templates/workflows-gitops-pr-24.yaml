@@ -1,0 +1,58 @@
+---
+# Source: promotion/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-project-workflows-gitops-pr-24
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: test-project
+  source:
+    path: .gitops/deploy/helm
+    repoURL: https://github.com/unbounded-tech/workflows-gitops.git
+    targetRevision: renovate/unbounded-tech-workflow-vnext-tag-1.x
+    helm:
+      version: v3
+      values: |
+        env:
+          test: true
+          type: preview
+          method: promotion
+          event: pr
+        image:
+          tag: pr-24-b12a8045a508f3cfd71787e63fa2b31414d98a3f
+  destination:
+    namespace: workflows-gitops-pr-24
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+---
+# Source: promotion/templates/preview-resources.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: something
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: test-project
+  source:
+    path: .gitops/deploy/helm
+    repoURL: https://github.com/unbounded-tech/something.git
+    targetRevision: main
+    helm:
+      version: v3
+  destination:
+    namespace: workflows-gitops-pr-24
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
