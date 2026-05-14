@@ -1,17 +1,20 @@
 ---
-# Source: argo-application/templates/application.yaml
+# Source: promotion/templates/application.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: test-project-workflows-gitops
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: test-project
   source:
+    path: .gitops/deploy/helm
     repoURL: https://github.com/unbounded-tech/workflows-gitops.git
-    targetRevision: v1.3.1
-    path: .
+    targetRevision: v1.4.0
     helm:
+      version: v3
       values: |
         env:
           test: true
@@ -19,11 +22,9 @@ spec:
           method: promotion
           event: v-tag
   destination:
-    server: https://kubernetes.default.svc
     namespace: test-project
+    server: https://kubernetes.default.svc
   syncPolicy:
     automated:
-      prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+      prune: true
