@@ -1,0 +1,58 @@
+---
+# Source: promotion/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-project-workflows-gitops-renovate-unbounded-tech-workflow-simple-releas
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: test-project
+  source:
+    path: .gitops/deploy/helm
+    repoURL: https://github.com/unbounded-tech/workflows-gitops.git
+    targetRevision: renovate/unbounded-tech-workflow-simple-release-2.x
+    helm:
+      version: v3
+      values: |
+        env:
+          test: true
+          type: preview
+          method: promotion
+          event: push
+        image:
+          tag: renovate-unbounded-tech-workflow-simple-releas-bf1a3c482254dfa9e71b0e72b9317f38d542dd16
+  destination:
+    namespace: workflows-gitops-renovate-unbounded-tech-workflow-simple-releas
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+---
+# Source: promotion/templates/preview-resources.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: something
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: test-project
+  source:
+    path: .gitops/deploy/helm
+    repoURL: https://github.com/unbounded-tech/something.git
+    targetRevision: main
+    helm:
+      version: v3
+  destination:
+    namespace: workflows-gitops-renovate-unbounded-tech-workflow-simple-releas
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
