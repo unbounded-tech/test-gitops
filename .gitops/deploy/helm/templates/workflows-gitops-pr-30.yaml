@@ -22,7 +22,7 @@ spec:
           method: promotion
           event: pr
         image:
-          tag: pr-30-1bd7bdfc5df8c91c0d37694f121b1ddbe95d180a
+          tag: pr-30-b8371bb33a1567131243d6a4d875cb2387ac76c5
   destination:
     namespace: workflows-gitops-pr-30
     server: https://kubernetes.default.svc
