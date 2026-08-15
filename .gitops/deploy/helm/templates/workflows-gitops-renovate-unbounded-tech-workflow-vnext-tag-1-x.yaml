@@ -22,7 +22,7 @@ spec:
           method: promotion
           event: push
         image:
-          tag: renovate-unbounded-tech-workflow-vnext-tag-1-x-1bd7bdfc5df8c91c0d37694f121b1ddbe95d180a
+          tag: renovate-unbounded-tech-workflow-vnext-tag-1-x-b8371bb33a1567131243d6a4d875cb2387ac76c5
   destination:
     namespace: workflows-gitops-renovate-unbounded-tech-workflow-vnext-tag-1-x
     server: https://kubernetes.default.svc
