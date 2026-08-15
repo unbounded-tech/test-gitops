@@ -1,0 +1,58 @@
+---
+# Source: promotion/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-project-workflows-gitops-renovate-actions-github-script-9-x
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: test-project
+  source:
+    path: .gitops/deploy/helm
+    repoURL: https://github.com/unbounded-tech/workflows-gitops.git
+    targetRevision: renovate/actions-github-script-9.x
+    helm:
+      version: v3
+      values: |
+        env:
+          test: true
+          type: preview
+          method: promotion
+          event: push
+        image:
+          tag: renovate-actions-github-script-9-x-346988f3d8e8a3a246327b58ca47e92856c54007
+  destination:
+    namespace: workflows-gitops-renovate-actions-github-script-9-x
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+---
+# Source: promotion/templates/preview-resources.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: something
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: test-project
+  source:
+    path: .gitops/deploy/helm
+    repoURL: https://github.com/unbounded-tech/something.git
+    targetRevision: main
+    helm:
+      version: v3
+  destination:
+    namespace: workflows-gitops-renovate-actions-github-script-9-x
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
