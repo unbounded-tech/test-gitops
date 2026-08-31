@@ -1,0 +1,58 @@
+---
+# Source: promotion/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-project-workflows-gitops-feat-promotion-pr-merge
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: test-project
+  source:
+    path: .gitops/deploy/helm
+    repoURL: https://github.com/unbounded-tech/workflows-gitops.git
+    targetRevision: feat/promotion-pr-merge
+    helm:
+      version: v3
+      values: |
+        env:
+          test: true
+          type: preview
+          method: promotion
+          event: push
+        image:
+          tag: feat-promotion-pr-merge-d6188906d086bddd5b0d7a11d89e46ec243073f4
+  destination:
+    namespace: workflows-gitops-feat-promotion-pr-merge
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+---
+# Source: promotion/templates/preview-resources.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: something
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: test-project
+  source:
+    path: .gitops/deploy/helm
+    repoURL: https://github.com/unbounded-tech/something.git
+    targetRevision: main
+    helm:
+      version: v3
+  destination:
+    namespace: workflows-gitops-feat-promotion-pr-merge
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
