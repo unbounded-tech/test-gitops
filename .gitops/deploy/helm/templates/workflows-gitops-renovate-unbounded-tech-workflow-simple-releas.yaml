@@ -22,7 +22,7 @@ spec:
           method: promotion
           event: push
         image:
-          tag: renovate-unbounded-tech-workflow-simple-releas-6bb06d5608a11870e2f2b45e3289d434324b28c9
+          tag: renovate-unbounded-tech-workflow-simple-releas-0155fa52ac85aca2e70d7cd4831fe5462745d4be
   destination:
     namespace: workflows-gitops-renovate-unbounded-tech-workflow-simple-releas
     server: https://kubernetes.default.svc
